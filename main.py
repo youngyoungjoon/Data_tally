@@ -1,7 +1,12 @@
 from painting import *
 from bounding_box import *
 
+def all_main(base_path):
+    bounding_box_cut(base_path) #이미지 xml(bounding_box)좌표로 잘르기
+    json_draw(base_path)        #이미지에 json(labelme) 좌표로 그려기
+
 
 if __name__ == '__main__':
-    bounding_box_cut(r'C:\Users\young\FileDetection\labeling_tally') #이미지 잘라주기
-    json_draw(r'C:\Users\young\FileDetection\labeling_tally')  #이미지 역으로 그려주기
+
+    all_main(r'C:\Users\young\FileDetection\labeling_tally')
+
