@@ -5,7 +5,7 @@ This is a model to inspect the labeling data.
 
 ## For dataset, follow the below way
 
-###Folder
+### Folder
 ```
 labeling_tally
     ㄴblepharitis
