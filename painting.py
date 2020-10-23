@@ -1,9 +1,3 @@
-
-
-
-
-
-
 # # Labelme로 작업한 파일들 확인(이미지에 그려주기)
 
 # In[40]:
@@ -14,9 +8,6 @@ import json
 import pandas as pd
 import numpy as np
 import os
-import re
-import tempfile
-import shutil
 
 a = pd.read_csv('name_list_with_pixel_value.csv')
 b = list(a['name']) #특징 이름값 리스트로 만들기
@@ -34,7 +25,7 @@ color_dict = dict() #특징별 색깔 지정해주기
 i = 0 #name_index
 j = 0 #color_index
 
-while i != len(b): # 질병의 특징(키값) = 색깔(값) 
+while i != len(b): # 질병의 특징(키값) = 색깔(값)
     
     color_dict[b[i]] = color_map[j]
     
@@ -79,10 +70,7 @@ def imwrite(filename, img, params=None):
         print(e) 
         return False
 
-    
-
 def json_draw(base_path):
-
 
     disease_kind = os.listdir(base_path) # 최상위 폴더 불러오기
 
@@ -134,19 +122,30 @@ def json_draw(base_path):
                 text = i['label']    #특징 이름
                 coordinate = i['points']  #좌표값
 
+                pts = np.array(coordinate, np.int32) #이미지 값은 int값이라 int로 변환
+                pts = pts.reshape((-1, 1, 2)) # [[[208, 106]], [[209, 123]], ~~ ] 으로 변환
 
-                for j in range(1, len(coordinate)):
+                cv2.polylines(img, [pts], True, color_dict[text], thickness=3)
+                #polylines Parameters:
+                #img – image
+                #pts (array) – 연결할 꼭지점 좌표
+                #isClosed – 닫흰 도형 여부
+                #color – Color
+                #thickness – 선 두께
 
-                    pt1_x = int(coordinate[j-1][0])
-                    pt1_y = int(coordinate[j-1][1])
+                #하나하나씩 line 그려주는건 시간이 오래걸려서 다각형으로 그리기
+                #for j in range(1, len(coordinate)):
 
-                    pt2_x = int(coordinate[j][0])
-                    pt2_y = int(coordinate[j][1])
+                    #pt1_x = int(coordinate[j-1][0])
+                    #pt1_y = int(coordinate[j-1][1])
+
+                    #pt2_x = int(coordinate[j][0])
+                    #pt2_y = int(coordinate[j][1])
 
 
-                    cv2.line(img, (pt1_x, pt1_y), (pt2_x, pt2_y), color_dict[text], 3, cv2.LINE_AA)  #line(파일, (시작점_x, 시작점_y), (종료점_x, 종료점_y), 색깔, 선의 개수지정(LINE_AA는 여러개의 선을 그리는 명령어))
+                    #cv2.line(img, (pt1_x, pt1_y), (pt2_x, pt2_y), color_dict[text], 3, cv2.LINE_AA)  #line(파일, (시작점_x, 시작점_y), (종료점_x, 종료점_y), 색깔, 선의 개수지정(LINE_AA는 여러개의 선을 그리는 명령어))
 
-                cv2.line(img, (pt2_x, pt2_y), (int(coordinate[0][0]), int(coordinate[0][1])), color_dict[text], 3, cv2.LINE_AA) #마지막 점을 처음 선과 연결해주기 위해 마지막으로 그려줌
+                #cv2.line(img, (pt2_x, pt2_y), (int(coordinate[0][0]), int(coordinate[0][1])), color_dict[text], 3, cv2.LINE_AA) #마지막 점을 처음 선과 연결해주기 위해 마지막으로 그려줌
 
                 ########### 추가 ##################
                 # frame이라는 이미지에 글씨 넣는 함수
